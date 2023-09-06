@@ -1,4 +1,6 @@
+require("dotenv").config();
 const puppeteer = require("puppeteer");
+const { MAIN_URL } = process.env;
 const {
   delay,
   elementExists,
@@ -121,10 +123,7 @@ const getPostData = async (page, postUrl) => {
 
   const page = await browser.newPage();
   await page.setDefaultNavigationTimeout(0);
-  const allPosts = await getAllPostsUrls(
-    page,
-    "https://www.factable.com/category/trivia/"
-  );
+  const allPosts = await getAllPostsUrls(page, MAIN_URL);
 
   // loop through each post url and collect all data
   for (let i = 0; i < allPosts.length; i++) {
@@ -133,6 +132,7 @@ const getPostData = async (page, postUrl) => {
     allPosts[i].intro = postData.intro;
     allPosts[i].headings = postData.allHeadings;
   }
+  await browser.close();
   writeToJson(allPosts, "allposts.json");
   //   writeToCsv(allPosts, "allPosts.xlsx");
 })();
